@@ -17,8 +17,8 @@ async function main() {
   const PolyNFT = await hre.ethers.getContractFactory("PolyNFT");
   const polyNFT = await PolyNFT.deploy(
     3000,
-    "ipfs://bafkreignkbzn4nhtxixs5u7x3zprgzg653kzi3pkljxlyb3bag5e7vhx3u",
-    "ipfs://bafybeic26wp7ck2bsjhjm5pcdigxqebnthqrmugsygxj5fov2r2qwhxyqu/"
+    "ipfs://bafybeic26wp7ck2bsjhjm5pcdigxqebnthqrmugsygxj5fov2r2qwhxyqu/",
+    "ipfs://bafkreignkbzn4nhtxixs5u7x3zprgzg653kzi3pkljxlyb3bag5e7vhx3u"
   );
 
   await polyNFT.deployed();

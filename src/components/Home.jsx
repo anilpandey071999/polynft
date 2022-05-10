@@ -38,6 +38,7 @@ function Home() {
       setShow(true)
       setError("NFT Minted");
       setTimeout(() => {
+        setShow(false)
         setError("");
       }, 3000);
       setLoadingState("loaded");
