@@ -10,6 +10,7 @@ import {
 } from "ethers";
 import api from "../api/nft.json";
 import NFTContract from "../address.json";
+import { GroupedButtons, slotvalue } from "./GroupedButtons";
 
 function Home() {
   const [account, setAccount] = useState("");
@@ -31,20 +32,24 @@ function Home() {
         signer
       );
       setLoadingState("Loading");
-      await PolyNFTContract.transferForMint({
-        value: ethers.utils.parseEther(`${0.01}`),
+      let whiteListingPrice = parseInt(
+        await PolyNFTContract.whiteListingPrice()
+      );
+      let trx = await PolyNFTContract.Minting(slotvalue, {
+        value: `${whiteListingPrice * slotvalue}`,
       });
-      await thirdPartyPayment();
-      setShow(true)
+      // await thirdPartyPayment();
+      await trx.wait();
+      setShow(true);
       setError("NFT Minted");
       setTimeout(() => {
-        setShow(false)
+        setShow(false);
         setError("");
       }, 3000);
       setLoadingState("loaded");
     } catch (e) {
       setLoadingState("loaded");
-      setError(`${e.data.message}`);
+      setError(`${e.data?.message === undefined ? e.code : e.data.message}`);
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -52,57 +57,26 @@ function Home() {
   };
 
   const checkWhiteList = async () => {
-    try{
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const PolyNFTContract = new ethers.Contract(
-      `${NFTContract.address}`,
-      api,
-      signer
-    );
-    const [accounts] = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setAccount(accounts);
-    console.log(parseInt(await PolyNFTContract.MAX_NFT()));
-    const checkWhiteListing = await PolyNFTContract.whiteListing(`${accounts}`);
-    setWhitelist(checkWhiteListing);
-    return checkWhiteListing;
-    }catch(e){
-      console.log(e);
-    }
-  };
-
-  const thirdPartyPayment = async () => {
     try {
-      const provider = new Providers.JsonRpcProvider(
-        "https://polygon-mumbai.infura.io/v3/86aee73124664f888045b10fe9bdfd14"
-      );
-      const wallet = new Wallet(
-        "57af49d8f5757c7ae75ac73641e161326c0e557ab24977d6dd088ade51b3ceda",
-        provider
-      );
-      const PolyNFTContract = new Contract(
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const PolyNFTContract = new ethers.Contract(
         `${NFTContract.address}`,
         api,
-        wallet
+        signer
       );
+      const [accounts] = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setAccount(accounts);
+      // console.log(parseInt(await PolyNFTContract.MAX_NFT()));
       const checkWhiteListing = await PolyNFTContract.whiteListing(
-        `${account}`
+        `${accounts}`
       );
-      if (checkWhiteListing) {
-        await PolyNFTContract.mint(`${account}`);
-      } else {
-        throw { message: "Your address is not whitelisted" };
-      }
-      // return 0;
+      setWhitelist(checkWhiteListing);
+      return checkWhiteListing;
     } catch (e) {
-      console.log(e);
-      setLoadingState("loaded");
-      setError(`${e.data.message}`);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      console.log(`${e}`);
     }
   };
 
@@ -110,7 +84,7 @@ function Home() {
 
   return (
     <div>
-      <Alert show={(Error.length !== 0 && !show)} variant="danger">
+      <Alert show={Error.length !== 0 && !show} variant="danger">
         {Error}
       </Alert>
       <Alert show={show} variant="success">
@@ -119,18 +93,37 @@ function Home() {
       <Container
         style={{
           textAlign: "center",
-          paddingTop: "20rem",
+          paddingTop: "5rem",
         }}
       >
+        <div className="TokenDetails">
+          <h1 className="tokenMinted">Points to note:</h1>
+          <h3 className="tokenMinted">
+            1. This is the ONLY Official site for minting Hungry Whales.
+          </h3>
+          <h3 className="tokenMinted">
+            2. A maximum of 15 HW NFTs can be minted per wallet.
+          </h3>
+          <h3 className="tokenMinted">
+            3. A maximum of 15 HW NFTs can be minted in one minting attempt.
+          </h3>
+          <h3 className="tokenMinted">
+            4. You shall be contacted by someone from HW admin team after
+            successful mint for on-boarding process within 24 hours. If not
+            contacted, you can write to <a href="mailto:hungrywhalesnft@gmail.com">hungrywhalesnft@gmail.com</a>
+          </h3>
+          <h3 className="tokenMinted">
+            5. You may write any queries or concerns to <a href="mailto:hungrywhalesnft@gmail.com">hungrywhalesnft@gmail.com</a>
+          </h3>
+          <h3 className="tokenMinted">See you on the other side!</h3>
+        </div>
         <Form.Label style={{ paddingBottom: "1rem" }}>
-        {!showWhiteList ? (
-           "You are not WhiteListed"
-        ) : (
-          "You are WhiteListed"
-        )}
-        <br></br>
+          
+          {!showWhiteList ? "You are not WhiteListed" : "You are WhiteListed"}
+          <br></br>
           MINT YOU FIRST NFT
         </Form.Label>
+        <GroupedButtons />
         <br></br>
         <Button onClick={() => mintNFT()}> Mint </Button>
       </Container>

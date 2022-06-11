@@ -1,24 +1,5 @@
-import { Container, Navbar, Nav, Button } from "react-bootstrap";
-import Install from "./install";
-import { ethers } from "ethers";
-// import { LinkContainer } from "react-router-bootstrap";
-// import ReactDOM from "react-dom";
+import { Container, Navbar, Button } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
-// ReactDOM.render(
-//   <React.StrictMode>
-//        <Router>
-//       <Routes>
-//         <Route exact path="/" component={Install} />
-//         {/* <Route path="/service" component={Service} />
-//         <Route path="/about" component={About} /> */}
-
-//       </Routes>
-//     </Router>
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// );
 
 const Navbars = () => {
   const [account, setaccount] = useState("");
@@ -33,10 +14,10 @@ const Navbars = () => {
       });
 
       // return true if network id is the same
-      if (currentChainId !== 80001) {
+      if (currentChainId !== 4) {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x13881" }], // chainId must be in hexadecimal numbers
+          params: [{ chainId: "0x4" }], // chainId must be in hexadecimal numbers
         });
       }
       // return false is network id is different
@@ -54,7 +35,7 @@ const Navbars = () => {
     <div>
       <Navbar bg="light" expand="lg">
         <Container fluid>
-          <Navbar.Brand href="/Install">ERC721 Market Place</Navbar.Brand>
+          <Navbar.Brand href="/Install">NFT</Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
            <Container style={{textAlign:"right"}}> 
